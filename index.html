@@ -554,67 +554,56 @@
             errorContainer.innerHTML = errorHTML;
         }
 
-        // ============ 核心升级：学生专用【生成答题报告】按钮（发给老师的完整版） ============
+        // ============ 核心修改完成：一键提交到飞书表格，无需复制转发 ============
         function exportStudentReport() {
             const stuName = document.getElementById("studentName").value.trim();
             const stuClass = document.getElementById("studentClass").value.trim();
             
-            // 校验必填项：姓名和班级必须填，避免收集数据时缺信息
+            // 必填项校验
             if(!stuName){
-                alert("⚠️ 请先填写【姓名】后再生成报告哦！");
+                alert("⚠️ 请先填写【姓名】后再提交报告哦！");
                 return;
             }
             if(!stuClass){
-                alert("⚠️ 请先填写【班级】后再生成报告哦！");
+                alert("⚠️ 请先填写【班级】后再提交报告哦！");
                 return;
             }
             
+            // 整理所有答题数据
             let rate = totalQuestions === 0 ? 0 : Math.round((score / totalQuestions) * 100);
-            // 生成【格式统一、信息完整、适合老师收集】的答题报告文本
-            let reportText = `
-【九年级英语抽测-学生答题报告】✅
-——————————————————
-姓        名：${stuName}
-班        级：${stuClass}
-答题总数：${totalQuestions} 道
-答对题数：${score} 道
-正确率：${rate}%
-错题数量：${errorList.length} 道
-——————————————————
-【错题详情】
-`;
-            if(errorList.length === 0){
-                reportText += "✅ 本次答题无错题，知识点掌握扎实！";
-            }else{
-                errorList.forEach((err,idx)=>{
-                    reportText += `${idx+1}.【${err.type}】
-原题：${err.question}
-作答：${err.userAnswer || "未作答"}
-正答：${err.correctAnswer}
-解析：${err.analysis}
-——————————————————
-`;
-                });
-            }
-            reportText += `
-报告生成时间：${new Date().toLocaleString()}
-——————————————————
-【温馨提示】已复制到剪贴板，直接粘贴发给老师即可！
-`;
-            // 自动复制报告到剪贴板
+            let errorCount = errorList.length;
+            let createTime = new Date().toLocaleString();
+            // 拼接完整错题详情
+            let errorDetail = errorList.length>0 ? errorList.map(item=>`【${item.type}】${item.question} 你的答案:${item.userAnswer || "未作答"} 正确答案:${item.correctAnswer} 解析:${item.analysis}`).join("；") : "本次答题暂无错题";
+
+            // 你的飞书表格提交链接（已帮你填入）
+            const feishuFormUrl = "https://mcno66f71sac.feishu.cn/base/GrkybwmxHagRWzsDtVbchEIknAc?field=fldwRVCRuD&table=tblbNRSLp1RrP8Wh&view=vewrGjlzdT";
+            
+            // 弹窗提示+自动复制数据+自动跳转飞书表单
+            const tipText = `✅ 答题报告生成成功！
+📌 学生：${stuName} | 班级：${stuClass}
+📌 答题总数：${totalQuestions} 道 | 答对：${score} 道 | 正确率：${rate}%
+📌 错题数量：${errorCount} 道
+✅ 已为你自动复制答题数据，即将跳转到提交页面，点击【提交】老师即可收到你的报告！`;
+            
+            alert(tipText);
+
+            // 自动复制完整数据到剪贴板（双重保障）
+            let csvText = `${stuName},${stuClass},${totalQuestions},${score},${rate}%,${errorCount},${errorDetail},${createTime}`;
             const textArea = document.createElement('textarea');
             textArea.style.position = 'fixed';
             textArea.style.top = -9999;
             textArea.style.left = -9999;
-            textArea.value = reportText;
+            textArea.value = csvText;
             document.body.appendChild(textArea);
             textArea.select();
             document.execCommand('copy');
             document.body.removeChild(textArea);
-            // 弹窗提示学生：复制成功，直接发老师
-            alert(`✅ 答题报告生成成功！已复制到剪贴板
-✅ 你的信息：${stuName} | ${stuClass} | 正确率${rate}%
-✅ 直接粘贴发给老师就可以啦！`);
+
+            // 1秒后自动打开飞书表单提交页面
+            setTimeout(() => {
+                window.open(feishuFormUrl, "_blank");
+            }, 1000);
         }
 
         // 重置所有记录
@@ -649,5 +638,4 @@
         };
     </script>
 </body>
-
 </html>
