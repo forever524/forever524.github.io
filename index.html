@@ -554,7 +554,7 @@
             errorContainer.innerHTML = errorHTML;
         }
 
-        // ============ 核心修改完成：一键提交到飞书表格，无需复制转发 ============
+        // ============ 核心修改完成：一键提交到【你指定的飞书链接】，无需复制转发 ============
         function exportStudentReport() {
             const stuName = document.getElementById("studentName").value.trim();
             const stuClass = document.getElementById("studentClass").value.trim();
@@ -576,8 +576,8 @@
             // 拼接完整错题详情
             let errorDetail = errorList.length>0 ? errorList.map(item=>`【${item.type}】${item.question} 你的答案:${item.userAnswer || "未作答"} 正确答案:${item.correctAnswer} 解析:${item.analysis}`).join("；") : "本次答题暂无错题";
 
-            // 你的飞书表格提交链接（已帮你填入）
-            const feishuFormUrl = "https://mcno66f71sac.feishu.cn/base/GrkybwmxHagRWzsDtVbchEIknAc?field=fldwRVCRuD&table=tblbNRSLp1RrP8Wh&view=vewrGjlzdT";
+            // ✅ 已替换成你提供的飞书表格提交链接
+            const feishuFormUrl = "https://mcno66f71sac.feishu.cn/base/GrkybwmxHagRWzsDtVbchEIknAc?field=fld3x5W71s&table=tbltzBXsWJku41bz&view=vew6kUSHv9";
             
             // 弹窗提示+自动复制数据+自动跳转飞书表单
             const tipText = `✅ 答题报告生成成功！
