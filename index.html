@@ -589,10 +589,10 @@
             return await res.json();
         }
 
-        // ✅ 修复核心：字段名 答对题数 → 做对题数 （和表格完全匹配）
+        // ✅ 修复核心：字段名 答对题数 → 和表格列名完全匹配
         async function exportStudentReport() {
-            const stuName = document.getElementById(\"studentName\").value.trim();
-            const stuClass = document.getElementById(\"studentClass\").value.trim();
+            const stuName = document.getElementById("studentName").value.trim();
+            const stuClass = document.getElementById("studentClass").value.trim();
             
             // 必填项校验
             if(!stuName){
@@ -619,7 +619,7 @@
                     "姓名": stuName,
                     "班级": stuClass,
                     "答题总数": totalQuestions,
-                    "做对题数": score, // ✅ 修复：和表格列名一致
+                    "答对题数": score, // ✅ 修复：和表格列名完全一致
                     "正确率": `${rate}%`,
                     "错题数量": errorCount,
                     "错题详情": errorDetail,
@@ -637,7 +637,7 @@
                 if(result.code === 0){
                     alert(`✅ 提交成功！🎉
 📌 学生：${stuName} | 班级：${stuClass}
-📌 答题总数：${totalQuestions} 道 | 做对：${score} 道 | 正确率：${rate}%
+📌 答题总数：${totalQuestions} 道 | 答对：${score} 道 | 正确率：${rate}%
 📌 错题数量：${errorCount} 道
 ✅ 你的答题报告已自动发送到老师的飞书表格，无需再做其他操作！`);
                 }else{
