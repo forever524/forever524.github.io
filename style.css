@@ -36,14 +36,14 @@ input {
 
 button {
     width: 100%;
-    padding: 12px;
+	padding: 12px;
     background-color: #4CAF50;
     color: white;
     border: none;
     border-radius: 5px;
     font-size: 16px;
     cursor: pointer;
-	margin-top: 20px;
+    margin-top: 20px;
 }
 
 button:hover {
@@ -79,7 +79,7 @@ button:hover {
     font-weight: bold;
 }
 
-/* ✅ 新增：答题结果 只读不可选中、不可修改，彻底锁定 */
+/* ========== 核心新增：答题结果信息 只读锁定 不可选中/不可修改/不可复制 ========== */
 .result-area p span {
     -webkit-user-select: none;
     -moz-user-select: none;
