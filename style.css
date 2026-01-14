@@ -43,7 +43,7 @@ button {
     border-radius: 5px;
     font-size: 16px;
     cursor: pointer;
-    margin-top: 20px;
+	margin-top: 20px;
 }
 
 button:hover {
@@ -77,4 +77,13 @@ button:hover {
 .result-area span {
     color: #4CAF50;
     font-weight: bold;
+}
+
+/* ✅ 新增：答题结果 只读不可选中、不可修改，彻底锁定 */
+.result-area p span {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    pointer-events: none;
 }
