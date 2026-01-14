@@ -554,8 +554,7 @@
             errorContainer.innerHTML = errorHTML;
         }
 
-        // ============ 核心修改：飞书API配置+自动提交函数 ============
-        // 你的飞书应用固定配置（已帮你填好，无需修改）
+        // ============ 核心修复：飞书API配置+接口修复+字段匹配 ============
         const FEISHU_CONFIG = {
             APP_ID: "cli_a9eba3180578dbb5",
             APP_SECRET: "NKrjzYr55FzQxqBpVaUkHgbVVP41oXro",
@@ -577,9 +576,9 @@
             return data.tenant_access_token;
         }
 
-        // 向飞书表格写入答题数据
+        // ✅ 修复核心：接口地址 bitable → base 新接口
         async function writeToFeishuTable(token, submitData) {
-            const res = await fetch(`https://open.feishu.cn/open-apis/bitable/v1/apps/${FEISHU_CONFIG.APP_TOKEN}/tables/${FEISHU_CONFIG.TABLE_ID}/records`, {
+            const res = await fetch(`https://open.feishu.cn/open-apis/base/v1/apps/${FEISHU_CONFIG.APP_TOKEN}/tables/${FEISHU_CONFIG.TABLE_ID}/records`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -590,10 +589,10 @@
             return await res.json();
         }
 
-        // ✅ 最终版提交报告函数：自动写入飞书表格，无跳转、无手动填写
+        // ✅ 修复核心：字段名 答对题数 → 做对题数 （和表格完全匹配）
         async function exportStudentReport() {
-            const stuName = document.getElementById("studentName").value.trim();
-            const stuClass = document.getElementById("studentClass").value.trim();
+            const stuName = document.getElementById(\"studentName\").value.trim();
+            const stuClass = document.getElementById(\"studentClass\").value.trim();
             
             // 必填项校验
             if(!stuName){
@@ -608,7 +607,7 @@
                 if(!confirm("⚠️ 你还未作答任何题目，是否继续提交空报告？")) return;
             }
 
-            // 整理所有答题数据（和飞书表格列名对应）
+            // 整理所有答题数据（和飞书表格列名100%对应）
             let rate = totalQuestions === 0 ? 0 : Math.round((score / totalQuestions) * 100);
             let errorCount = errorList.length;
             let createTime = new Date().toLocaleString();
@@ -620,7 +619,7 @@
                     "姓名": stuName,
                     "班级": stuClass,
                     "答题总数": totalQuestions,
-                    "答对题数": score,
+                    "做对题数": score, // ✅ 修复：和表格列名一致
                     "正确率": `${rate}%`,
                     "错题数量": errorCount,
                     "错题详情": errorDetail,
@@ -638,11 +637,12 @@
                 if(result.code === 0){
                     alert(`✅ 提交成功！🎉
 📌 学生：${stuName} | 班级：${stuClass}
-📌 答题总数：${totalQuestions} 道 | 答对：${score} 道 | 正确率：${rate}%
+📌 答题总数：${totalQuestions} 道 | 做对：${score} 道 | 正确率：${rate}%
 📌 错题数量：${errorCount} 道
 ✅ 你的答题报告已自动发送到老师的飞书表格，无需再做其他操作！`);
                 }else{
-                    alert(`❌ 提交失败！原因：${result.msg}
+                    alert(`❌ 提交失败！错误码：${result.code}
+原因：${result.msg}
 💡 请重试一次，若仍失败请联系老师`);
                 }
             } catch (err) {
