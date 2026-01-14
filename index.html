@@ -554,8 +554,44 @@
             errorContainer.innerHTML = errorHTML;
         }
 
-        // ============ 核心修改完成：一键提交到【你指定的飞书链接】，无需复制转发 ============
-        function exportStudentReport() {
+        // ============ 核心修改：飞书API配置+自动提交函数 ============
+        // 你的飞书应用固定配置（已帮你填好，无需修改）
+        const FEISHU_CONFIG = {
+            APP_ID: "cli_a9eba3180578dbb5",
+            APP_SECRET: "NKrjzYr55FzQxqBpVaUkHgbVVP41oXro",
+            APP_TOKEN: "GrkybwmxHagRWzsDtVbchEIknAc",
+            TABLE_ID: "tbltzBXsWJku41bz"
+        };
+
+        // 获取飞书API调用凭证
+        async function getFeishuToken() {
+            const res = await fetch("https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({
+                    app_id: FEISHU_CONFIG.APP_ID,
+                    app_secret: FEISHU_CONFIG.APP_SECRET
+                })
+            });
+            const data = await res.json();
+            return data.tenant_access_token;
+        }
+
+        // 向飞书表格写入答题数据
+        async function writeToFeishuTable(token, submitData) {
+            const res = await fetch(`https://open.feishu.cn/open-apis/bitable/v1/apps/${FEISHU_CONFIG.APP_TOKEN}/tables/${FEISHU_CONFIG.TABLE_ID}/records`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+                body: JSON.stringify({ records: [submitData] })
+            });
+            return await res.json();
+        }
+
+        // ✅ 最终版提交报告函数：自动写入飞书表格，无跳转、无手动填写
+        async function exportStudentReport() {
             const stuName = document.getElementById("studentName").value.trim();
             const stuClass = document.getElementById("studentClass").value.trim();
             
@@ -568,42 +604,50 @@
                 alert("⚠️ 请先填写【班级】后再提交报告哦！");
                 return;
             }
-            
-            // 整理所有答题数据
+            if(totalQuestions === 0){
+                if(!confirm("⚠️ 你还未作答任何题目，是否继续提交空报告？")) return;
+            }
+
+            // 整理所有答题数据（和飞书表格列名对应）
             let rate = totalQuestions === 0 ? 0 : Math.round((score / totalQuestions) * 100);
             let errorCount = errorList.length;
             let createTime = new Date().toLocaleString();
-            // 拼接完整错题详情
             let errorDetail = errorList.length>0 ? errorList.map(item=>`【${item.type}】${item.question} 你的答案:${item.userAnswer || "未作答"} 正确答案:${item.correctAnswer} 解析:${item.analysis}`).join("；") : "本次答题暂无错题";
 
-            // ✅ 已替换成你提供的飞书表格提交链接
-            const feishuFormUrl = "https://mcno66f71sac.feishu.cn/base/GrkybwmxHagRWzsDtVbchEIknAc?field=fld3x5W71s&table=tbltzBXsWJku41bz&view=vew6kUSHv9";
-            
-            // 弹窗提示+自动复制数据+自动跳转飞书表单
-            const tipText = `✅ 答题报告生成成功！
+            // 构造飞书表格需要的数据格式
+            const submitData = {
+                fields: {
+                    "姓名": stuName,
+                    "班级": stuClass,
+                    "答题总数": totalQuestions,
+                    "答对题数": score,
+                    "正确率": `${rate}%`,
+                    "错题数量": errorCount,
+                    "错题详情": errorDetail,
+                    "提交时间": createTime
+                }
+            };
+
+            try {
+                alert("⏳ 正在提交你的答题报告到老师后台，请稍候...");
+                // 1.获取凭证 2.写入数据
+                const token = await getFeishuToken();
+                const result = await writeToFeishuTable(token, submitData);
+                
+                // 提交成功/失败提示
+                if(result.code === 0){
+                    alert(`✅ 提交成功！🎉
 📌 学生：${stuName} | 班级：${stuClass}
 📌 答题总数：${totalQuestions} 道 | 答对：${score} 道 | 正确率：${rate}%
 📌 错题数量：${errorCount} 道
-✅ 已为你自动复制答题数据，即将跳转到提交页面，点击【提交】老师即可收到你的报告！`;
-            
-            alert(tipText);
-
-            // 自动复制完整数据到剪贴板（双重保障）
-            let csvText = `${stuName},${stuClass},${totalQuestions},${score},${rate}%,${errorCount},${errorDetail},${createTime}`;
-            const textArea = document.createElement('textarea');
-            textArea.style.position = 'fixed';
-            textArea.style.top = -9999;
-            textArea.style.left = -9999;
-            textArea.value = csvText;
-            document.body.appendChild(textArea);
-            textArea.select();
-            document.execCommand('copy');
-            document.body.removeChild(textArea);
-
-            // 1秒后自动打开飞书表单提交页面
-            setTimeout(() => {
-                window.open(feishuFormUrl, "_blank");
-            }, 1000);
+✅ 你的答题报告已自动发送到老师的飞书表格，无需再做其他操作！`);
+                }else{
+                    alert(`❌ 提交失败！原因：${result.msg}
+💡 请重试一次，若仍失败请联系老师`);
+                }
+            } catch (err) {
+                alert(`❌ 提交出错！请检查网络后重试，错误信息：${err.message}`);
+            }
         }
 
         // 重置所有记录
