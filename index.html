@@ -77,13 +77,14 @@
             color: white;
             cursor: pointer;
             margin: 10px;
-            transition: background-color 0.3s;
+            transition: all 0.3s;
         }
         .btn:hover {
             background-color: #2980b9;
         }
         .btn:active {
             transform: scale(0.98);
+            opacity: 0.9;
         }
         .btn-green {
             background-color: #27ae60;
@@ -107,6 +108,10 @@
         }
         .btn-blue-big:hover {
             background-color: #0E42D2;
+        }
+        .btn-blue-big:active {
+            transform: scale(0.98);
+            opacity: 0.9;
         }
         .question {
             font-size: 28px;
@@ -133,6 +138,7 @@
         .option.selected {
             border-color: #3498db;
             background-color: #e3f2fd;
+            font-weight: bold;
         }
         .input-area {
             margin: 30px 0;
@@ -156,14 +162,17 @@
             border-radius: 8px;
             display: none;
             line-height: 1.6;
+            font-weight: 500;
         }
         .correct {
             background-color: #e8f5e9;
             color: #27ae60;
+            border: 1px solid #c8e6c9;
         }
         .incorrect {
             background-color: #ffebee;
             color: #e74c3c;
+            border: 1px solid #ffcdd2;
         }
         .score {
             font-size: 32px;
@@ -412,8 +421,8 @@
         }
 
         function checkVocabAnswer() {
-            const userAnswer = document.getElementById("vocab-answer").value.trim().toLowerCase();
-            const correctAnswer = vocabQuestions[currentVocabIndex].answer.toLowerCase();
+            const userAnswer = document.getElementById("vocab-answer").value.trim().toLowerCase().replace(/\s+/g,"");
+            const correctAnswer = vocabQuestions[currentVocabIndex].answer.toLowerCase().replace(/\s+/g,"");
             const feedback = document.getElementById("vocab-feedback");
             
             totalQuestions++;
@@ -501,8 +510,8 @@
         }
 
         function checkSentenceAnswer() {
-            const userAnswer = document.getElementById("sentence-answer").value.trim().toLowerCase();
-            const correctAnswer = sentenceQuestions[currentSentenceIndex].answer.toLowerCase();
+            const userAnswer = document.getElementById("sentence-answer").value.trim().toLowerCase().replace(/\s+/g,"");
+            const correctAnswer = sentenceQuestions[currentSentenceIndex].answer.toLowerCase().replace(/\s+/g,"");
             const feedback = document.getElementById("sentence-feedback");
             
             totalQuestions++;
@@ -554,7 +563,7 @@
             errorContainer.innerHTML = errorHTML;
         }
 
-        // ============ 核心修复：飞书API配置+接口修复+字段匹配 ============
+        // ============ 已帮你填入全部正确的飞书参数 ✅✅✅ ============
         const FEISHU_CONFIG = {
             APP_ID: "cli_a9eba3180578dbb5",
             APP_SECRET: "NKrjzYr55FzQxqBpVaUkHgbVVP41oXro",
@@ -619,7 +628,7 @@
                     "姓名": stuName,
                     "班级": stuClass,
                     "答题总数": totalQuestions,
-                    "答对题数": score, // ✅ 修复：和表格列名完全一致
+                    "答对题数": score,
                     "正确率": `${rate}%`,
                     "错题数量": errorCount,
                     "错题详情": errorDetail,
@@ -674,7 +683,7 @@
             }
         }
 
-        // 页面初始化
+        // 页面初始化-自动生成题目
         window.onload = function() {
             generateVocabQuestion();
             generateGrammarQuestion();
