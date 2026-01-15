@@ -79,7 +79,7 @@ button:hover {
     font-weight: bold;
 }
 
-/* 答题结果信息 只读锁定 不可选中/不可修改/不可复制 */
+/* ========== 核心新增：答题结果信息 只读锁定 不可选中/不可修改/不可复制 ========== */
 .result-area p span {
     -webkit-user-select: none;
     -moz-user-select: none;
