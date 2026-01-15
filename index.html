@@ -12,14 +12,16 @@
         <div class="info-form" id="infoForm">
             <h2>九年级英语答题 - 基础信息</h2>
             <input type="text" id="name" placeholder="请输入姓名" required>
-            <input type="text" id="class" placeholder="请输入班级" required>
+            <input type="text" id="className" placeholder="请输入班级" required>
             <input type="text" id="studentId" placeholder="请输入学号" required>
             <button onclick="startQuiz()">开始答题</button>
         </div>
 
         <!-- 答题区域 -->
         <div class="quiz-area" id="quizArea" style="display: none;">
-            <h2>答题区域（共15题）</h2>
+            <h2>答题区域（共15题，课本同步核心知识点）</h2>
+            <!-- 新增：答题进度提示 -->
+            <div style="text-align:center;color:#666;font-size:16px;margin-bottom:20px;" id="progressTip">✅ 答题进度：已答 0 题 / 共 15 题</div>
             <div id="questionsContainer"></div>
             <button onclick="submitQuiz()">提交试卷</button>
         </div>
@@ -31,7 +33,9 @@
             <p>班级：<span id="resultClass"></span></p>
             <p>学号：<span id="resultStudentId"></span></p>
             <p>正确率：<span id="accuracy"></span></p>
-            <p>错误题号：<span id="wrongIds"></span></p>
+            <p>错误题号（对应单元）：<span id="wrongIds"></span></p>
+            <!-- 新增：同步成功提示 -->
+            <p style="color:#2196F3;font-weight:bold;display:none;" id="syncSuccess">✅ 已成功跳转飞书，信息自动填充完成！</p>
             <button onclick="redirectToFeishu()">确认同步至飞书</button>
         </div>
     </div>
