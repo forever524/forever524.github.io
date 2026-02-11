@@ -1,41 +1,538 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>九年级英语答题系统</title>
-    <link rel="stylesheet" href="style.css">
+    <title>人教版九年级全一册英语同步答题页面</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Microsoft YaHei', sans-serif;
+        }
+        body {
+            background-color: #f5f7fa;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.05);
+        }
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e8f4f8;
+        }
+        h1 {
+            color: #2d3748;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        .intro {
+            color: #718096;
+            font-size: 16px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        /* 学生信息样式 */
+        .student-info {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .student-info input {
+            padding: 10px 15px;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            font-size: 16px;
+            width: 200px;
+        }
+        .section {
+            margin-bottom: 40px;
+        }
+        .section-title {
+            color: #4299e1;
+            font-size: 22px;
+            margin-bottom: 20px;
+            padding-left: 10px;
+            border-left: 4px solid #4299e1;
+        }
+        .question {
+            background: #f8f9fa;
+            padding: 15px 20px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+        }
+        .question-number {
+            font-weight: bold;
+            color: #2d3748;
+            margin-bottom: 8px;
+        }
+        .question-content {
+            margin-bottom: 10px;
+            color: #4a5568;
+        }
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            resize: vertical;
+            min-height: 100px;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            font-size: 16px;
+            margin-top: 5px;
+        }
+        .btn-group {
+            text-align: center;
+            margin: 40px 0;
+        }
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 0 10px;
+            transition: all 0.3s;
+        }
+        .btn-submit {
+            background: #48bb78;
+            color: white;
+        }
+        .btn-reset {
+            background: #ed8936;
+            color: white;
+        }
+        .btn-analysis {
+            background: #9f7aea;
+            color: white;
+        }
+        .btn:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+        .analysis-section {
+            display: none;
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 2px solid #e8f4f8;
+        }
+        .analysis-title {
+            color: #e53e3e;
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+        .answer-item {
+            margin-bottom: 25px;
+        }
+        .answer-correct {
+            color: #48bb78;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        .analysis-content {
+            color: #4a5568;
+            background: #f0f8fb;
+            padding: 15px;
+            border-radius: 6px;
+            border-left: 3px solid #4299e1;
+        }
+        .textbook-source {
+            color: #718096;
+            font-size: 14px;
+            margin-top: 10px;
+            font-style: italic;
+        }
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            h1 {
+                font-size: 24px;
+            }
+            .section-title {
+                font-size: 20px;
+            }
+            .btn {
+                display: block;
+                margin: 10px auto;
+                width: 100%;
+            }
+            .student-info input {
+                width: 100%;
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="container">
-        <!-- 基础信息表单 -->
-        <div class="info-form" id="infoForm">
-            <h2>九年级英语答题 - 基础信息</h2>
-            <input type="text" id="name" placeholder="请输入姓名" required>
-            <input type="text" id="class" placeholder="请输入班级" required>
-            <input type="text" id="studentId" placeholder="请输入学号" required>
-            <button onclick="startQuiz()">开始答题</button>
+        <header>
+            <h1>人教版九年级全一册英语同步答题页面</h1>
+            <p class="intro">本页面基于教材14个单元核心知识点编写，涵盖词汇、语法、句型、阅读理解等题型，答题完成后可查看解析与正确答案</p>
+        </header>
+
+        <!-- 学生信息输入框 -->
+        <div class="student-info">
+            <input type="text" id="studentName" placeholder="请输入姓名">
+            <input type="text" id="studentClass" placeholder="请输入班级（如：九1班）">
         </div>
 
-        <!-- 答题区域 -->
-        <div class="quiz-area" id="quizArea" style="display: none;">
-            <h2>答题区域（共15题）</h2>
-            <div id="questionsContainer"></div>
-            <button onclick="submitQuiz()">提交试卷</button>
+        <!-- 词汇运用部分 -->
+        <div class="section">
+            <h2 class="section-title">一、词汇运用（共5题）</h2>
+            <div class="question">
+                <div class="question-number">1. 根据句意及首字母提示完成单词</div>
+                <div class="question-content">We should pay a______ to our pronunciation when learning English.（Unit 1）</div>
+                <input type="text" id="vocab1" placeholder="请输入答案">
+            </div>
+            <div class="question">
+                <div class="question-number">2. 用括号内所给单词的适当形式填空</div>
+                <div class="question-content">Many teenagers are allowed ______ (choose) their own clothes in modern families.（Unit 7）</div>
+                <input type="text" id="vocab2" placeholder="请输入答案">
+            </div>
+            <div class="question">
+                <div class="question-number">3. 选择合适的单词填空（每词限用一次）</div>
+                <div class="question-content">[produce, avoid, create, connect, admire]</div>
+                <div class="question-content">People in China ______ the moon and share mooncakes on the Mid-Autumn Festival.（Unit 2）</div>
+                <input type="text" id="vocab3" placeholder="请输入答案">
+            </div>
+            <div class="question">
+                <div class="question-number">4. 翻译短语</div>
+                <div class="question-content">天生具有 ______（Unit 1）</div>
+                <input type="text" id="vocab4" placeholder="请输入答案">
+            </div>
+            <div class="question">
+                <div class="question-number">5. 写出下列单词的反义词</div>
+                <div class="question-content">alive - ______（Unit 12）</div>
+                <input type="text" id="vocab5" placeholder="请输入答案">
+            </div>
         </div>
 
-        <!-- 结果展示区域 -->
-        <div class="result-area" id="resultArea" style="display: none;">
-            <h2>答题结果</h2>
-            <p>姓名：<span id="resultName"></span></p>
-            <p>班级：<span id="resultClass"></span></p>
-            <p>学号：<span id="resultStudentId"></span></p>
-            <p>正确率：<span id="accuracy"></span></p>
-            <p>错误题号：<span id="wrongIds"></span></p>
-            <button onclick="redirectToFeishu()">确认同步至飞书</button>
+        <!-- 语法填空部分 -->
+        <div class="section">
+            <h2 class="section-title">二、语法填空（共5题）</h2>
+            <div class="question">
+                <div class="question-number">1. 用适当的介词填空</div>
+                <div class="question-content">He improved his English ______ listening to English movies.（Unit 1）</div>
+                <input type="text" id="grammar1" placeholder="请输入答案">
+            </div>
+            <div class="question">
+                <div class="question-number">2. 改写句子为被动语态</div>
+                <div class="question-content">People grow tea in Anxi and Hangzhou.</div>
+                <div class="question-content">→ Tea ______ in Anxi and Hangzhou.（Unit 5）</div>
+                <input type="text" id="grammar2" placeholder="请输入答案">
+            </div>
+            <div class="question">
+                <div class="question-number">3. 用 "used to" 改写句子</div>
+                <div class="question-content">She was afraid of the dark when she was young.</div>
+                <div class="question-content">→ She ______ afraid of the dark.（Unit 4）</div>
+                <input type="text" id="grammar3" placeholder="请输入答案">
+            </div>
+            <div class="question">
+                <div class="question-number">4. 选择合适的情态动词填空（must/might/can't）</div>
+                <div class="question-content">The schoolbag ______ belong to Linda. It has her name on it.（Unit 8）</div>
+                <input type="text" id="grammar4" placeholder="请输入答案">
+            </div>
+            <div class="question">
+                <div class="question-number">5. 补全定语从句</div>
+                <div class="question-content">I like music ______ I can sing along with.（Unit 9）</div>
+                <input type="text" id="grammar5" placeholder="请输入答案">
+            </div>
+        </div>
+
+        <!-- 句型转换部分 -->
+        <div class="section">
+            <h2 class="section-title">三、句型转换（共3题）</h2>
+            <div class="question">
+                <div class="question-number">1. 改为同义句</div>
+                <div class="question-content">Could you please tell me where I can buy some stamps?</div>
+                <div class="question-content">→ Could you please tell me where ______ some stamps?（Unit 3）</div>
+                <input type="text" id="sentence1" placeholder="请输入答案">
+            </div>
+            <div class="question">
+                <div class="question-number">2. 改为否定句</div>
+                <div class="question-content">Sixteen-year-olds should be allowed to drive.</div>
+                <div class="question-content">→ Sixteen-year-olds ______ allowed to drive.（Unit 7）</div>
+                <input type="text" id="sentence2" placeholder="请输入答案">
+            </div>
+            <div class="question">
+                <div class="question-number">3. 改为感叹句</div>
+                <div class="question-content">The dragon boat races are exciting.</div>
+                <div class="question-content">→ ______ the dragon boat races are!（Unit 2）</div>
+                <input type="text" id="sentence3" placeholder="请输入答案">
+            </div>
+        </div>
+
+        <!-- 阅读理解部分 -->
+        <div class="section">
+            <h2 class="section-title">四、阅读理解（共4题）</h2>
+            <div class="question">
+                <div class="question-content">阅读短文，回答问题（选自Unit 3）</div>
+                <div class="question-content" style="background: #fff; padding: 10px; border-radius: 4px; margin: 10px 0;">
+                    Fun Times Park - Always a Fun Time!<br>
+                    [Alice and He Wei are in Space World.]<br>
+                    Alice: I wonder where we should go next.<br>
+                    He Wei: How about that new ride over there?<br>
+                    Alice: Well ... it looks scary.<br>
+                    He Wei: Come on! I promise it'll be exciting! If you're scared, just shout or hold my hand.<br>
+                    [After the ride …]<br>
+                    Alice: You were right! That was fun! I was scared at first, but shouting did help.<br>
+                    He Wei: See, that wasn't so bad, right? You never know until you try something.<br>
+                    Alice: Yes, I'm so glad I tried it!<br>
+                    He Wei: Do you want to go to Water World now?<br>
+                    Alice: Sure, but I'm getting hungry. Do you know where we can get some good food quickly?<br>
+                    He Wei: Of course! I suggest Water City Restaurant in Water World. It serves delicious food.
+                </div>
+                <div class="question-number">1. Why did Alice not want to go on the new ride at first?</div>
+                <textarea id="reading1" placeholder="请输入答案"></textarea>
+                <div class="question-number">2. How did Alice feel after the ride?</div>
+                <textarea id="reading2" placeholder="请输入答案"></textarea>
+                <div class="question-number">3. Where does He Wei suggest they eat?</div>
+                <textarea id="reading3" placeholder="请输入答案"></textarea>
+                <div class="question-number">4. What does the underlined sentence "You never know until you try something" mean?</div>
+                <textarea id="reading4" placeholder="请输入答案"></textarea>
+            </div>
+        </div>
+
+        <!-- 书面表达部分 -->
+        <div class="section">
+            <h2 class="section-title">五、书面表达（1题）</h2>
+            <div class="question">
+                <div class="question-content">假设你的笔友Peter要来中国交流，想了解中国的春节，请你根据教材Unit 2相关内容，给他写一封信，介绍春节的习俗（如团聚、吃年夜饭、贴对联、放烟花等），并说明你喜欢春节的原因。词数80-100。</div>
+                <textarea id="writing" placeholder="请在此处写作文"></textarea>
+            </div>
+        </div>
+
+        <!-- 按钮组 -->
+        <div class="btn-group">
+            <button class="btn btn-submit" onclick="checkAnswers()">提交答案（含数据提交）</button>
+            <button class="btn btn-reset" onclick="resetAnswers()">重置答案</button>
+            <button class="btn btn-analysis" onclick="showAnalysis()">查看解析</button>
+        </div>
+
+        <!-- 解析区域 -->
+        <div class="analysis-section" id="analysisSection">
+            <h2 class="analysis-title">答案与解析</h2>
+            
+            <!-- 词汇运用解析 -->
+            <div class="answer-item">
+                <div class="answer-correct">一、词汇运用答案</div>
+                <div class="analysis-content">
+                    1. attention（解析：pay attention to 是固定短语，意为"注意"，Unit 1重点短语）<br>
+                    2. to choose（解析：allow sb. to do sth. 的被动形式为be allowed to do sth.，Unit 7语法重点）<br>
+                    3. admire（解析：admire the moon 意为"赏月"，符合中秋节习俗，Unit 2词汇）<br>
+                    4. be born with（解析：固定短语，Unit 1核心词汇延伸）<br>
+                    5. dead（解析：alive 意为"活着的"，反义词为dead，Unit 12词汇）
+                </div>
+                <div class="textbook-source">教材出处：Unit 1、Unit 2、Unit 7、Unit 12词汇表及课文</div>
+            </div>
+
+            <!-- 语法填空解析 -->
+            <div class="answer-item">
+                <div class="answer-correct">二、语法填空答案</div>
+                <div class="analysis-content">
+                    1. by（解析：by+动名词表示"通过某种方式"，Unit 1语法重点）<br>
+                    2. is grown（解析：一般现在时被动语态，结构为am/is/are+过去分词，Unit 5语法）<br>
+                    3. used to be（解析：used to 后接动词原形，表"过去常常"，Unit 4语法）<br>
+                    4. must（解析：must 表肯定推测，"一定"，Unit 8情态动词用法）<br>
+                    5. that/which（解析：定语从句引导词，先行词为物时用that/which，Unit 9语法）
+                </div>
+                <div class="textbook-source">教材出处：各单元Grammar Focus部分</div>
+            </div>
+
+            <!-- 句型转换解析 -->
+            <div class="answer-item">
+                <div class="answer-correct">三、句型转换答案</div>
+                <div class="analysis-content">
+                    1. to buy（解析：宾语从句简化为"疑问词+不定式"结构，Unit 3语法）<br>
+                    2. shouldn't be（解析：情态动词should的否定形式，Unit 7语法）<br>
+                    3. How exciting（解析：how引导的感叹句结构为How+形容词+主语+谓语，Unit 2语法）
+                </div>
+                <div class="textbook-source">教材出处：各单元句型转换练习</div>
+            </div>
+
+            <!-- 阅读理解解析 -->
+            <div class="answer-item">
+                <div class="answer-correct">四、阅读理解答案</div>
+                <div class="analysis-content">
+                    1. Because it looked scary.（解析：从Alice的话"it looks scary"可直接得出答案）<br>
+                    2. She felt it was fun.（解析：After the ride后Alice说"That was fun!"）<br>
+                    3. Water City Restaurant in Water World.（解析：He Wei明确建议"Water City Restaurant in Water World"）<br>
+                    4. 你不尝试就永远不知道结果。（解析：字面意为"直到你尝试才会知道"，引申为鼓励尝试新事物）
+                </div>
+                <div class="textbook-source">教材出处：Unit 3 Section A 3a短文</div>
+            </div>
+
+            <!-- 书面表达参考范文 -->
+            <div class="answer-item">
+                <div class="answer-correct">五、书面表达参考范文</div>
+                <div class="analysis-content">
+                    Dear Peter,<br>
+                    I'm glad to hear you're coming to China. The Spring Festival is the most important festival in China. It usually comes in January or February.<br>
+                    Before the festival, people clean their houses and put up couplets. On New Year's Eve, families get together for a big dinner. We eat dumplings, fish and other delicious food. At midnight, we set off fireworks to welcome the new year.<br>
+                    I love the Spring Festival because it's a time for family reunion. We can spend time with relatives and receive red envelopes with money. It makes me feel warm and happy.<br>
+                    I hope you can experience the Spring Festival with us. Best wishes!<br>
+                    Yours,<br>
+                    Li Hua
+                </div>
+                <div class="textbook-source">教材出处：Unit 2 节日话题及写作要求</div>
+            </div>
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <script>
+        // 检查答案 + 提交数据到指定接口
+        function checkAnswers() {
+            // 1. 验证姓名/班级是否填写
+            const studentName = document.getElementById('studentName').value.trim();
+            const studentClass = document.getElementById('studentClass').value.trim();
+            if (!studentName || !studentClass) {
+                alert('请先填写姓名和班级信息！');
+                return;
+            }
+
+            let correctCount = 0;
+            const totalQuestions = 13; // 5词汇+5语法+3句型=13道客观题
+            const wrongQuestionIds = []; // 存储错误题号
+
+            // 词汇题答案
+            const vocabAnswers = ["attention", "to choose", "admire", "be born with", "dead"];
+            const vocabInputs = ["vocab1", "vocab2", "vocab3", "vocab4", "vocab5"];
+            
+            // 语法题答案
+            const grammarAnswers = ["by", "is grown", "used to be", "must", "that/which"];
+            const grammarInputs = ["grammar1", "grammar2", "grammar3", "grammar4", "grammar5"];
+            
+            // 句型题答案
+            const sentenceAnswers = ["to buy", "shouldn't be", "How exciting"];
+            const sentenceInputs = ["sentence1", "sentence2", "sentence3"];
+
+            // 2. 检查词汇题 + 记录错误题号
+            for (let i = 0; i < vocabInputs.length; i++) {
+                const input = document.getElementById(vocabInputs[i]);
+                const userAnswer = input.value.trim().toLowerCase();
+                const isCorrect = userAnswer === vocabAnswers[i].toLowerCase();
+                
+                if (isCorrect) {
+                    correctCount++;
+                    input.style.border = "2px solid #48bb78";
+                } else {
+                    input.style.border = "2px solid #e53e3e";
+                    wrongQuestionIds.push(`词汇运用${i+1}题`); // 记录错误题号
+                }
+            }
+
+            // 3. 检查语法题 + 记录错误题号
+            for (let i = 0; i < grammarInputs.length; i++) {
+                const input = document.getElementById(grammarInputs[i]);
+                const userAnswer = input.value.trim().toLowerCase();
+                const isCorrect = (i === 4) 
+                    ? ["that", "which", "that/which"].includes(userAnswer)
+                    : userAnswer === grammarAnswers[i].toLowerCase();
+                
+                if (isCorrect) {
+                    correctCount++;
+                    input.style.border = "2px solid #48bb78";
+                } else {
+                    input.style.border = "2px solid #e53e3e";
+                    wrongQuestionIds.push(`语法填空${i+1}题`); // 记录错误题号
+                }
+            }
+
+            // 4. 检查句型题 + 记录错误题号
+            for (let i = 0; i < sentenceInputs.length; i++) {
+                const input = document.getElementById(sentenceInputs[i]);
+                const userAnswer = input.value.trim().toLowerCase();
+                const isCorrect = userAnswer === sentenceAnswers[i].toLowerCase();
+                
+                if (isCorrect) {
+                    correctCount++;
+                    input.style.border = "2px solid #48bb78";
+                } else {
+                    input.style.border = "2px solid #e53e3e";
+                    wrongQuestionIds.push(`句型转换${i+1}题`); // 记录错误题号
+                }
+            }
+
+            // 5. 计算正确率（保留2位小数）
+            const accuracyRate = ((correctCount / totalQuestions) * 100).toFixed(2) + '%';
+
+            // 6. 收集要提交的数据（字段名改为中文）
+            const submitData = {
+                "姓名": studentName,
+                "班级": studentClass,
+                "正确题数": correctCount,
+                "总客观题数": totalQuestions,
+                "正确率": accuracyRate,
+                "错误题号": wrongQuestionIds,
+                "提交时间": new Date().toLocaleString()
+            };
+
+            // 7. 提交数据到指定POST接口
+            // 👇 此处为修改的部分：仅更换了接口地址
+            const submitUrl = 'https://quickform.cn/api/2gzzls67pp';
+            fetch(submitUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(submitData),
+            })
+            .then(response => {
+                if (!response.ok) throw new Error(`HTTP错误：${response.status}`);
+                return response.json();
+            })
+            .then(() => {
+                alert(`✅ 提交成功！
+📝 姓名：${studentName} | 班级：${studentClass}
+🎯 客观题得分：${correctCount}/${totalQuestions}
+📊 正确率：${accuracyRate}
+❌ 错误题号：${wrongQuestionIds.length > 0 ? wrongQuestionIds.join('、') : '无'}`);
+            })
+            .catch(error => {
+                alert(`⚠️ 答题核对完成，但数据提交失败：${error.message}
+📝 姓名：${studentName} | 班级：${studentClass}
+🎯 客观题得分：${correctCount}/${totalQuestions}
+📊 正确率：${accuracyRate}
+❌ 错误题号：${wrongQuestionIds.length > 0 ? wrongQuestionIds.join('、') : '无'}`);
+            });
+        }
+
+        // 重置答案
+        function resetAnswers() {
+            // 重置所有输入框（包括姓名/班级）
+            const inputs = document.querySelectorAll("input[type='text'], textarea");
+            inputs.forEach(input => {
+                input.value = "";
+                input.style.border = "1px solid #dee2e6";
+            });
+
+            // 隐藏解析区
+            document.getElementById("analysisSection").style.display = "none";
+        }
+
+        // 显示解析
+        function showAnalysis() {
+            const analysisSection = document.getElementById("analysisSection");
+            analysisSection.style.display = analysisSection.style.display === "block" ? "none" : "block";
+        }
+    </script>
 </body>
 </html>
